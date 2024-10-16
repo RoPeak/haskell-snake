@@ -1,6 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 module UI where
 
+-- Imports --
+
 import Control.Monad (forever, void)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.State.Class (put)
@@ -32,23 +34,19 @@ import Data.Sequence (Seq)
 import qualified Data.Sequence as S
 import Linear.V2 (V2(..))
 
--- Types
+
+-- Types --
 
 -- | Ticks mark passing of time
---
--- This is our custom event that will be constantly fed into the app.
 data Tick = Tick
 
 -- | Named resources
---
--- Not currently used, but will be easier to refactor
--- if we call this "Name" now.
 type Name = ()
 
 data Cell = Snake | Food | Empty
 
--- App definition
 
+-- App definition --
 app :: App Game Tick Name
 app = App { appDraw = drawUI
           , appChooseCursor = neverShowCursor
@@ -62,31 +60,31 @@ main = do
   chan <- newBChan 10
   forkIO $ forever $ do
     writeBChan chan Tick
-    threadDelay 100000 -- decides how fast your game moves
+    threadDelay 115000 -- decides how fast the game moves
   g <- initGame
   let buildVty = Graphics.Vty.CrossPlatform.mkVty Graphics.Vty.Config.defaultConfig
   initialVty <- buildVty
   void $ customMain initialVty buildVty (Just chan) app g
 
--- Handling events
 
+-- Handling events -- 
 handleEvent :: BrickEvent Name Tick -> EventM Name Game ()
 handleEvent (AppEvent Tick)                       = step
 handleEvent (VtyEvent (V.EvKey V.KUp []))         = turn North
 handleEvent (VtyEvent (V.EvKey V.KDown []))       = turn South
 handleEvent (VtyEvent (V.EvKey V.KRight []))      = turn East
 handleEvent (VtyEvent (V.EvKey V.KLeft []))       = turn West
-handleEvent (VtyEvent (V.EvKey (V.KChar 'k') [])) = turn North
-handleEvent (VtyEvent (V.EvKey (V.KChar 'j') [])) = turn South
-handleEvent (VtyEvent (V.EvKey (V.KChar 'l') [])) = turn East
-handleEvent (VtyEvent (V.EvKey (V.KChar 'h') [])) = turn West
+handleEvent (VtyEvent (V.EvKey (V.KChar 'w') [])) = turn North
+handleEvent (VtyEvent (V.EvKey (V.KChar 's') [])) = turn South
+handleEvent (VtyEvent (V.EvKey (V.KChar 'd') [])) = turn East
+handleEvent (VtyEvent (V.EvKey (V.KChar 'a') [])) = turn West
 handleEvent (VtyEvent (V.EvKey (V.KChar 'r') [])) = initGame >>= put
 handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt
 handleEvent (VtyEvent (V.EvKey V.KEsc []))        = halt
 handleEvent _                                     = pure ()
 
--- Drawing
 
+-- Drawing --
 drawUI :: Game -> [Widget Name]
 drawUI g =
   [ C.center $ padRight (Pad 2) (drawStats g) <+> drawGrid g ]

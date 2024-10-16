@@ -11,6 +11,7 @@ module Snake
   , height, width
   ) where
 
+-- Imports --
 import Control.Applicative ((<|>))
 import Control.Monad (guard, void)
 import Data.Maybe (fromMaybe)
@@ -26,8 +27,7 @@ import qualified Data.Sequence as S
 import Linear.V2 (V2(..), _x, _y)
 import System.Random (Random(..), newStdGen)
 
--- Types
-
+-- Types --
 data Game = Game
   { _snake  :: Snake        -- ^ snake as a sequence of points in N2
   , _dir    :: Direction    -- ^ direction
@@ -55,13 +55,12 @@ data Direction
 
 makeLenses ''Game
 
--- Constants
-
+-- Constants --
 height, width :: Int
 height = 20
 width = 20
 
--- Functions
+-- Functions --
 
 -- | Step forward in time
 step :: MonadState Game m => m ()
@@ -115,9 +114,7 @@ nextHead = get <&> \(Game {_snake = (a :<| _), _dir = d}) -> case d of
   East  -> a & _x %~ (\x -> (x + 1) `mod` width)
   West  -> a & _x %~ (\x -> (x - 1) `mod` width)
 
--- | Turn game direction (only turns orthogonally)
---
--- Implicitly unpauses yet locks game
+-- | Turn game direction
 turn :: MonadState Game m => Direction -> m ()
 turn d = do
   unlessM (use locked) $ do
