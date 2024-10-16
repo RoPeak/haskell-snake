@@ -65,7 +65,33 @@ handleEvent g _                                     = continue g
 
 -- Drawing --
 drawUI :: Game -> [Widget Name]
-drawUI = undefined
+drawUI g = 
+    [ C.center $ padRight (Pad 2) (drawStats g) <+> drawGrid g]
+
+drawStats :: Game -> Widget Name
+drawStats g = hLimit 11
+    $ vBox [ drawScore (g ^. score),
+             padTop (Pad 2) $ drawGameOver (g ^. dead)
+            ]
+
+drawScore :: Int -> Widget Name
+drawScore n = withBorderStyle BS.unicodeBold
+    $ B.borderWithLabel (str "Score")
+    $ C.hCenter
+    $ padAll 1
+    $ str $ show n
+
+drawGameOver :: Bool -> Widget Name
+drawGameOver dead =
+    if dead
+        then withAttr gameOverAttr $ C.hCenter $ str "GAME OVER"
+        else emptyWidget
+
+gameOverAttr :: AttrName
+gameOverAttr = "gameOver"
+
+drawGrid :: Game -> Widget Name
+drawGrid = undefined
 
 theMap :: AttrMap
 theMap = undefined
