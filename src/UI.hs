@@ -91,7 +91,30 @@ gameOverAttr :: AttrName
 gameOverAttr = "gameOver"
 
 drawGrid :: Game -> Widget Name
-drawGrid = undefined
+drawGrid g = withBorderStyle BS.unicodeBold
+    $ B.borderWithLabel (str "Snake")
+    $ vBox rows
+    where
+        rows         = [hBox $ cellsInRow r | r <- [height-1, height-2..0]]
+        cellsInRow y = [drawCoord (V2 x y) | x <- [0..width-1]]
+        drawCoord    = drawCell . cellAt
+        cellAt c
+            | c `elem` g ^. snake = Snake
+            | c == g ^. food = Food
+            | otherwise = Empty
+
+drawCell :: Cell -> Widget Name
+drawCell Snake = withAttr snakeAttr cw
+drawCell Food = withAttr foodAttr cw
+drawCell Empty = withAttr emptyAttr cw
+
+cw :: Widget Name
+cw = str " "
+
+snakeAttr, foodAttr, emptyAttr :: AttrName
+snakeAttr = "snakeAttr"
+foodAttr = "foodAttr"
+emptyAttr = "emptyAttr"
 
 theMap :: AttrMap
 theMap = undefined
