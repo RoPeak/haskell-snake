@@ -117,7 +117,11 @@ foodAttr = "foodAttr"
 emptyAttr = "emptyAttr"
 
 theMap :: AttrMap
-theMap = undefined
+theMap = attrMap V.defAttr
+    [ (snakeAttr, V.blue `on` V.blue),
+      (foodAttr, V.red `on` V.red),
+      (gameOverAttr, fg V.red `V.withStyle` V.bold)
+    ]
 
 
 -- Main --
