@@ -1,6 +1,6 @@
 module Snake where
 
--- Imports
+-- Imports --
 import Control.Applicative ((<|>))
 import Control.Monad (guard)
 import Data.Maybe (fromMaybe)
@@ -13,7 +13,7 @@ import Linear.V2 (V2(..), _x, _y)
 import System.Random (Random(..), newStdGen)
 
 
--- Types
+-- Types --
 data Game = Game
     { _snake  :: Snake,         -- Snake as a sequence of points
       _dir    :: Direction,     -- Direction of snake
@@ -34,3 +34,27 @@ data Stream a = a :| Stream as
 data Direction
     = North | East | South | West
     deriving (Eq, Show)
+
+
+-- Core functions --
+-- Step forward in time
+step :: Game -> Game
+step g = fromMaybe g $ do
+    guard (not $ g ^. paused || g ^. dead)
+    let g' = g & frozen .~ False
+    return . fromMaybe (move g') $ die g' <|> eatFood g'
+
+-- Possibly die if next head position is disallowed
+die :: Game -> Maybe Game
+
+-- Possibly eat food if next head position is food
+eatFood :: Game -> Maybe Game
+
+-- Move snake along 
+move :: Game -> Game
+
+-- Turn game direction (orthogonally)
+turn :: Direction -> Game -> Game
+
+-- Initialise a paused game with random food location
+initGame :: IO Game
