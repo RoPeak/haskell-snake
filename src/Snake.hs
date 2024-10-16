@@ -16,7 +16,7 @@ import Control.Monad (guard, void)
 import Data.Maybe (fromMaybe)
 
 import Control.Lens hiding ((<|), (|>), (:>), (:<), index)
-import Control.Monad.IO.Class (MonadIO)
+import Control.Monad.IO.Class (MonadIO, liftIO)
 import Control.Monad.State.Class (MonadState, modify, get)
 import Control.Monad.Trans.Maybe
 import Control.Monad.Trans.State (execState)
@@ -134,7 +134,7 @@ turnDir n c | c `elem` [North, South] && n `elem` [East, West] = n
 initGame :: MonadIO m => m Game
 initGame = do
   (f :| fs) <-
-    fromList . randomRs (V2 0 0, V2 (width - 1) (height - 1)) <$> newStdGen
+    liftIO $ fromList . randomRs (V2 0 0, V2 (width - 1) (height - 1)) <$> newStdGen
   let xm = width `div` 2
       ym = height `div` 2
       g  = Game

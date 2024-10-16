@@ -19,6 +19,7 @@ extra-source-files:  CHANGELOG.md
 executable ropeak-snake
   main-is:             Main.hs
   hs-source-dirs:      src
+  other-modules:       Snake, UI
   exposed-modules:     Snake, UI
   build-depends:       base ^>=4.13.0.0, 
                        brick,
@@ -26,5 +27,12 @@ executable ropeak-snake
                        linear,
                        microlens,
                        microlens-th,
-                       random
+                       random,
+                       lens,
+                       mtl,
+                       transformers,
+                       extra,
+                       vty,
+                       vty-crossplatform
+  ghc-options:         -threaded
   default-language:    Haskell2010
